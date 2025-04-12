@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer Choice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .timer-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: white;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Timer Choice</h1>
+
+    <div>
+        <label>Select Timer:</label>
+        <div id="timer-buttons">
+            <button class="timer-option" data-duration="60">1 Minute</button>
+            <button class="timer-option" data-duration="120">2 Minutes</button>
+            <button class="timer-option" data-duration="180">3 Minutes</button>
+            <button class="timer-option" data-duration="300">5 Minutes</button>
+            <button class="timer-option" data-duration="600">10 Minutes</button>
+        </div>
+    </div>
+
+    <div>
+        <label for="custom-time">Custom Time (mm:ss):</label>
+        <input type="text" id="custom-time" placeholder="mm:ss">
+        <button id="custom-time-button">Start</button>
+    </div>
+
+    <div id="timer-circle" class="timer-circle" style="background-color: lightblue;">
+        0:00
+    </div>
+
+    <div>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+            <button id="random-choice-1">Topic</button>
+            <p id="random-choice-display-1"></p>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+            <button id="random-choice-2">Situation</button>
+            <p id="random-choice-display-2"></p>
+        </div>
+    </div>
+
+
+    <script src="list1.js"></script>
+    <script src="list2.js"></script>
+    <script>
+        const timerButtons = document.querySelectorAll('.timer-option');
+        let timerInterval;
+
+        timerButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const duration = parseInt(button.getAttribute('data-duration'));
+                let remainingTime = duration;
+
+                clearInterval(timerInterval);
+
+                timerButtons.forEach(btn => btn.style.backgroundColor = ''); // Reset button styles
+                button.style.backgroundColor = 'lightblue'; // Highlight selected button
+
+                timerInterval = setInterval(() => {
+                    const minutes = Math.floor(remainingTime / 60);
+                    const seconds = remainingTime % 60;
+                    timerCircle.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                    if (remainingTime <= 0) {
+                        timerCircle.style.backgroundColor = 'red';
+                        clearInterval(timerInterval);
+                    } else if (remainingTime <= duration * 0.1) {
+                        timerCircle.style.backgroundColor = 'orange';
+                    } else if (remainingTime <= duration * 0.2) {
+                        timerCircle.style.backgroundColor = 'green';
+                    } else {
+                        timerCircle.style.backgroundColor = 'lightblue';
+                    }
+
+                    remainingTime--;
+                }, 1000);
+            });
+        });
+
+        const customTimeInput = document.getElementById('custom-time');
+        const customTimeButton = document.getElementById('custom-time-button');
+
+        customTimeButton.addEventListener('click', () => {
+            const customTime = customTimeInput.value;
+            const timeParts = customTime.split(':');
+
+            if (timeParts.length === 2) {
+                const minutes = parseInt(timeParts[0]);
+                const seconds = parseInt(timeParts[1]);
+
+                if (!isNaN(minutes) && !isNaN(seconds) && seconds >= 0 && seconds < 60) {
+                    const duration = minutes * 60 + seconds;
+                    let remainingTime = duration;
+
+                    clearInterval(timerInterval);
+
+                    timerButtons.forEach(btn => btn.style.backgroundColor = ''); // Reset button styles
+                    customTimeInput.style.backgroundColor = 'lightblue'; // Highlight custom time input
+
+                    timerInterval = setInterval(() => {
+                        const minutes = Math.floor(remainingTime / 60);
+                        const seconds = remainingTime % 60;
+                        timerCircle.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                        if (remainingTime <= 0) {
+                            timerCircle.style.backgroundColor = 'red';
+                            clearInterval(timerInterval);
+                        } else if (remainingTime <= duration * 0.1) {
+                            timerCircle.style.backgroundColor = 'orange';
+                        } else if (remainingTime <= duration * 0.2) {
+                            timerCircle.style.backgroundColor = 'green';
+                        } else {
+                            timerCircle.style.backgroundColor = 'lightblue';
+                        }
+
+                        remainingTime--;
+                    }, 1000);
+                } else {
+                    alert('Invalid time format. Please enter in mm:ss format.');
+                }
+            } else {
+                alert('Invalid time format. Please enter in mm:ss format.');
+            }
+        });
+
+        const timerCircle = document.getElementById('timer-circle');
+        const randomChoice1Button = document.getElementById('random-choice-1');
+        const randomChoice2Button = document.getElementById('random-choice-2');
+
+        const randomChoiceDisplay1 = document.getElementById('random-choice-display-1');
+        const randomChoiceDisplay2 = document.getElementById('random-choice-display-2');
+
+        randomChoice1Button.addEventListener('click', () => {
+            const randomChoice = list1[Math.floor(Math.random() * list1.length)];
+            randomChoiceDisplay1.textContent = `${randomChoice}`;
+        });
+
+        randomChoice2Button.addEventListener('click', () => {
+            const randomChoice = list2[Math.floor(Math.random() * list2.length)];
+            randomChoiceDisplay2.textContent = `${randomChoice}`;
+        });
+    </script>
+</body>
+
+</html>
